@@ -29,14 +29,23 @@ def create_app() -> Flask:
     app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
     app.config.from_object(Config)
 
-    # Extensions
+    # 1. Extensions
     db.init_app(app)
     CORS(app, origins=Config.CORS_ORIGINS, supports_credentials=True)
 
     limiter = Limiter(key_func=get_remote_address, app=app,
                       default_limits=[Config.RATELIMIT_DEFAULT],
                       storage_uri=Config.RATELIMIT_STORAGE_URL)
-    limiter.limit(Config.RATELIMIT_LOGIN)(admin_bp.view_functions["admin.admin_login"])
+
+    # 2. Blueprints MUST be registered BEFORE limiter.limit
+    app.register_blueprint(public_bp)
+    app.register_blueprint(admin_bp)
+
+    # 3. Apply limit now that the blueprints are registered
+    # We use app.view_functions because they are now attached to the app
+    limiter.limit(Config.RATELIMIT_LOGIN)(app.view_functions["admin.admin_login"])
+
+
 
     # Swagger UI
     Swagger(app, template={
@@ -48,6 +57,20 @@ def create_app() -> Flask:
             "cookieAuth": {"type": "apiKey", "in": "cookie", "name": "admin_token"}
         },
     })
+
+    @app.get("/")
+    def serve_index():
+        if not os.path.exists(os.path.join(TEMPLATE_DIR, "index.html")):
+            return jsonify({"error": f"index.html not found in {TEMPLATE_DIR}"}), 404
+        return send_from_directory(TEMPLATE_DIR, "index.html")
+
+    @app.get("/admin")
+    def serve_admin():
+        return send_from_directory(TEMPLATE_DIR, "admin.html")
+
+    logger.info("✅ App ready | debug=%s", Config.DEBUG)
+
+    return app
 
     # Blueprints
     app.register_blueprint(public_bp)

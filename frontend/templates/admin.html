@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin — Долоодой Сургууль</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+
+:root{--navy:#0d2b5e;--navy2:#1a3f7a;--navy3:#0a1f45;--gold:#c9a84c;--w:#fff;--off:#f4f7fc;--card:#fff;--text:#1a1a2e;--muted:#5a6a82;--border:#dce6f5;--danger:#e53e3e;--success:#38a169;--warn:#d69e2e;--radius:10px;--shadow:0 2px 16px rgba(13,43,94,.1)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);min-height:100vh}
+
+/* LOGIN */
+#login{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy3),var(--navy));display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:var(--w);border-radius:16px;padding:48px 40px;width:380px;box-shadow:0 24px 64px rgba(0,0,0,.3);text-align:center}
+.l-ico{width:64px;height:64px;background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 20px}
+.l-title{font-size:1.4rem;font-weight:700;color:var(--navy);margin-bottom:4px}
+.l-sub{color:var(--muted);font-size:.85rem;margin-bottom:28px}
+.l-err{background:#fee;border:1px solid #fcc;color:var(--danger);border-radius:8px;padding:10px 14px;font-size:.85rem;margin-bottom:16px;display:none}
+input,textarea,select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;background:var(--w);color:var(--text);margin-bottom:12px}
+input:focus,textarea:focus,select:focus{border-color:var(--navy)}
+textarea{min-height:80px;resize:vertical;margin-bottom:0}
+
+/* BUTTONS */
+.btn{padding:10px 18px;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-full{width:100%;padding:12px}
+.btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{background:var(--navy2)}
+.btn-green{background:var(--success);color:#fff}.btn-green:hover{background:#2f855a}
+.btn-red{background:var(--danger);color:#fff}.btn-red:hover{background:#c53030}
+.btn-warn{background:var(--warn);color:var(--navy3)}.btn-warn:hover{background:#b7791f}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--navy)}.btn-outline:hover{background:var(--navy);color:#fff}
+
+/* LAYOUT */
+#app{display:none;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--navy3);display:flex;flex-direction:column;z-index:100}
+.sb-head{padding:22px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo{font-size:1rem;font-weight:700;color:#fff;line-height:1.3}
+.sb-sub{font-size:.72rem;color:rgba(255,255,255,.4);margin-top:2px}
+.sb-nav{flex:1;overflow-y:auto;padding:12px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.65);font-size:.84rem;cursor:pointer;transition:all .2s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:rgba(201,168,76,.15);color:var(--gold);border-right:3px solid var(--gold)}
+.ni-icon{font-size:1rem;width:20px;text-align:center}
+.sb-foot{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08)}
+.u-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.u-av{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:var(--navy3)}
+.u-name{font-size:.82rem;color:rgba(255,255,255,.8);font-weight:600}
+.btn-logout{width:100%;padding:8px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-logout:hover{background:rgba(229,62,62,.2);color:#fc8181}
+.main{margin-left:240px;padding:28px;min-height:100vh}
+.page{display:none}.page.active{display:block}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.ph-title{font-size:1.4rem;font-weight:700;color:var(--navy)}
+.ph-sub{font-size:.82rem;color:var(--muted);margin-top:2px}
+
+/* CARD */
+.card{background:var(--card);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:20px}
+.card-title{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-size:.75rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--off)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+
+/* FORM */
+.fg label{display:block;font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.fg{margin-bottom:14px}
+.form2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* BADGES */
+.bdg{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700}
+.b-on{background:rgba(56,161,105,.12);color:var(--success)}
+.b-off{background:rgba(229,62,62,.1);color:var(--danger)}
+.b-pub{background:rgba(13,43,94,.08);color:var(--navy)}
+.b-draft{background:rgba(90,106,130,.1);color:var(--muted)}
+
+/* THUMB */
+.thumb{width:40px;height:40px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.thph{width:40px;height:40px;background:var(--off);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px}
+.s-ico{width:46px;height:46px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.s-num{font-size:1.6rem;font-weight:700;color:var(--navy);line-height:1}
+.s-lbl{font-size:.75rem;color:var(--muted);margin-top:2px}
+
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(10,20,40,.75);z-index:9000;display:none;align-items:center;justify-content:center;padding:20px}
+.ov.open{display:flex}
+.modal{background:var(--w);border-radius:14px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.25)}
+.mh{padding:22px 26px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mh h3{font-size:1.05rem;font-weight:700;color:var(--navy)}
+.mx{border:none;background:none;font-size:1.3rem;cursor:pointer;color:var(--muted);padding:4px 8px;border-radius:6px}
+.mx:hover{background:var(--off)}
+.mb{padding:24px 26px}
+.mf{padding:16px 26px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+/* PHOTO PREVIEW */
+.prev{margin-top:8px;width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:none}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-size:.88rem;font-weight:600;z-index:99999;transform:translateY(80px);opacity:0;transition:all .3s;max-width:320px;color:#fff}
+#toast.show{transform:none;opacity:1}
+#toast.ok{background:var(--success)}
+#toast.err{background:var(--danger)}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:12px}
+.photo-cell{position:relative}
+.photo-cell img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.photo-del{position:absolute;top:4px;right:4px;background:rgba(229,62,62,.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:.65rem;display:flex;align-items:center;justify-content:center}
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-box">
+    <div class="l-ico">🏫</div>
+    <div class="l-title">Admin Нэвтрэх</div>
+    <div class="l-sub">Долоодой Сургуулийн удирдлагын систем</div>
+    <div class="l-err" id="l-err"></div>
+    <input type="text"     id="l-user" placeholder="Нэвтрэх нэр" autocomplete="username"/>
+    <input type="password" id="l-pass" placeholder="Нууц үг"     autocomplete="current-password"
+           onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="btn btn-navy btn-full" onclick="doLogin()">Нэвтрэх</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="sidebar">
+    <div class="sb-head"><div class="sb-logo">Долоодой Сургууль</div><div class="sb-sub">Admin Panel</div></div>
+    <nav class="sb-nav">
+      <button class="nav-item active" onclick="showPage('dash',this)"><span class="ni-icon">📊</span>Dashboard</button>
+      <button class="nav-item" onclick="showPage('school',this)"><span class="ni-icon">🏫</span>Сургуулийн мэдээлэл</button>
+      <button class="nav-item" onclick="showPage('director',this)"><span class="ni-icon">👤</span>Захирал</button>
+      <button class="nav-item" onclick="showPage('teachers',this)"><span class="ni-icon">👩‍🏫</span>Багш нар</button>
+      <button class="nav-item" onclick="showPage('classes',this)"><span class="ni-icon">📚</span>Ангиуд</button>
+      <button class="nav-item" onclick="showPage('news',this)"><span class="ni-icon">📰</span>Мэдээ</button>
+      <button class="nav-item" onclick="showPage('ach',this)"><span class="ni-icon">🏆</span>Амжилт</button>
+      <button class="nav-item" onclick="showPage('ann',this)"><span class="ni-icon">📢</span>Зар</button>
+      <button class="nav-item" onclick="showPage('gallery',this)"><span class="ni-icon">🖼️</span>Галерей</button>
+      <button class="nav-item" onclick="showPage('faq',this)"><span class="ni-icon">❓</span>FAQ</button>
+      <button class="nav-item" onclick="showPage('grads',this)"><span class="ni-icon">👨‍🎓</span>Төгсөгчид</button>
+    </nav>
+    <div class="sb-foot">
+      <div class="u-row"><div class="u-av" id="u-av">A</div><div class="u-name" id="u-name">Admin</div></div>
+      <button class="btn-logout" onclick="doLogout()">🚪 Гарах</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dash">
+      <div class="ph"><div><div class="ph-title">Dashboard</div><div class="ph-sub">Нэгдсэн мэдээлэл</div></div>
+        <a href="/" target="_blank" class="btn btn-outline">🌐 Вэбсайт</a></div>
+      <div class="stats-grid" id="dash-stats"></div>
+      <div class="card"><div class="card-title">Сүүлийн мэдээ</div><div id="dash-news"></div></div>
+    </div>
+
+    <!-- SCHOOL -->
+    <div class="page" id="page-school">
+      <div class="ph"><div><div class="ph-title">Сургуулийн Мэдээлэл</div></div></div>
+      <div class="card">
+        <form id="school-form" onsubmit="saveSchool(event)">
+          <div class="form2">
+            <div class="fg"><label>Бүрэн нэр</label><input name="full_name"/></div>
+            <div class="fg"><label>Үүсгэгдсэн огноо</label><input name="founded_date" type="date"/></div>
+          </div>
+          <div class="fg"><label>Mission</label><textarea name="mission"></textarea></div>
+          <div class="fg"><label>Vision</label><textarea name="vision"></textarea></div>
+          <div class="fg"><label>Values</label><textarea name="values_text"></textarea></div>
+          <div class="form2">
+            <div class="fg"><label>Дүүрэг</label><input name="district"/></div>
+            <div class="fg"><label>Гудамж</label><input name="street"/></div>
+            <div class="fg"><label>Байр</label><input name="building"/></div>
+            <div class="fg"><label>Утас</label><input name="phone"/></div>
+            <div class="fg"><label>И-мэйл</label><input name="email" type="email"/></div>
+            <div class="fg"><label>Facebook URL</label><input name="facebook_url"/></div>
+          </div>
+          <div class="fg"><label>Лого</label><input name="logo" type="file" accept="image/*" onchange="prevImg(this,'logo-p')"/>
+            <img id="logo-p" class="prev"/></div>
+          <div class="card" style="margin-top:16px">
+            <div class="card-title">📸 About хэсгийн зургууд</div>
+            <label class="btn btn-green" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-bottom:12px">
+              + Зураг нэмэх<input type="file" accept="image/*" multiple style="display:none" onchange="uploadSchoolPhotos(this)">
+            </label>
+            <div class="photo-grid" id="school-photo-grid"></div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px">
+            <button type="submit" class="btn btn-green">💾 Хадгалах</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- DIRECTOR -->
+    <div class="page" id="page-director">
+      <div class="ph"><div><div class="ph-title">Захирлын Мэдээлэл</div></div></div>
+      <div class="card">
+        <form id="dir-form" onsubmit="saveDirector(event)">
+          <div class="fg"><label>Бүтэн нэр</label><input name="full_name"/></div>
+          <div class="fg"><label>Намтар</label><textarea name="biography"></textarea></div>
+          <div class="fg"><label>Мэндчилгээний үг</label><textarea name="greeting_text"></textarea></div>
+          <div class="fg"><label>Зураг</label><input name="photo" type="file" accept="image/*" onchange="prevImg(this,'dir-p')"/>
+            <img id="dir-p" class="prev"/></div>
+          <button type="submit" class="btn btn-green" style="margin-top:8px">💾 Хадгалах</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- TEACHERS -->
+    <div class="page" id="page-teachers">
+      <div class="ph"><div><div class="ph-title">Багш Нар</div><div class="ph-sub" id="t-count"></div></div>
+        <button class="btn btn-green" onclick="openTeacherM()">+ Нэмэх</button></div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>Зураг</th><th>Нэр</th><th>Хичээл</th><th>Зэрэг</th><th>Жил</th><th>Төлөв</th><th>Үйлдэл</th></tr></thead>
+        <tbody id="t-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- CLASSES -->
+    <div class="page" id="page-classes">
+      <div class="ph"><div><div class="ph-title">Ангиуд</div></div>
+        <button class="btn btn-green" onclick="openClassM()">+ Нэмэх</button></div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>Анги</th><th>Бүлэг</th><th>Анги удирдсан</th><th>Хичээлийн жил</th><th>Үйлдэл</th></tr></thead>
+        <tbody id="cls-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- NEWS -->
+    <div class="page" id="page-news">
+      <div class="ph"><div><div class="ph-title">Мэдээ</div></div>
+        <button class="btn btn-green" onclick="openNewsM()">+ Нэмэх</button></div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>Зураг</th><th>Гарчиг</th><th>Огноо</th><th>Төлөв</th><th>Үйлдэл</th></tr></thead>
+        <tbody id="news-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="page" id="page-ach">
+      <div class="ph"><div><div class="ph-title">Амжилт & Шагналууд</div></div>
+        <button class="btn btn-green" onclick="openAchM()">+ Нэмэх</button></div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>Тэмцээн</th><th>Сурагч</th><th>Анги</th><th>Шагнал</th><th>Байр</th><th>Он</th><th>Түвшин</th><th>Үйлдэл</th></tr></thead>
+        <tbody id="ach-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="page" id="page-ann">
+      <div class="ph"><div><div class="ph-title">Зар & Мэдэгдэл</div></div>
+        <button class="btn btn-green" onclick="openAnnM()">+ Нэмэх</button></div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>Гарчиг</th><th>Огноо</th><th>Дуусах</th><th>Төлөв</th><th>Үйлдэл</th></tr></thead>
+        <tbody id="ann-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="page" id="page-gallery">
+      <div class="ph"><div><div class="ph-title">Галерей</div></div>
+        <button class="btn btn-green" onclick="openAlbumM()">+ Цомог нэмэх</button></div>
+      <div id="gallery-content"></div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="page" id="page-faq">
+      <div class="ph"><div><div class="ph-title">FAQ</div></div>
+        <button class="btn btn-green" onclick="openFaqM()">+ Нэмэх</button></div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>Асуулт (МН)</th><th>Асуулт (EN)</th><th>Дараалал</th><th>Төлөв</th><th>Үйлдэл</th></tr></thead>
+        <tbody id="faq-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- GRADUATES -->
+    <div class="page" id="page-grads">
+      <div class="ph"><div><div class="ph-title">Төгсөгчид</div><div class="ph-sub">Pending зөвшөөрөл шаардлагатай</div></div></div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>Нэр</th><th>Он</th><th>Одоо хаана</th><th>Илгээсэн</th><th>Төлөв</th><th>Үйлдэл</th></tr></thead>
+        <tbody id="grad-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+<!-- Teacher -->
+<div class="ov" id="m-teacher">
+  <div class="modal">
+    <div class="mh"><h3 id="t-m-title">Багш нэмэх</h3><button class="mx" onclick="closeM('m-teacher')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="t-id"/>
+      <div class="form2">
+        <div class="fg"><label>Нэр *</label><input id="t-name"/></div>
+        <div class="fg"><label>Хичээл *</label><input id="t-subj"/></div>
+        <div class="fg"><label>Зэрэг</label>
+          <select id="t-deg"><option value="bachelor">Бакалавр</option><option value="master">Магистр</option><option value="doctorate">Доктор</option><option value="other">Бусад</option></select>
+        </div>
+        <div class="fg"><label>Жил</label><input id="t-exp" type="number" min="0" value="0"/></div>
+      </div>
+      <div class="fg"><label>Зураг</label><input id="t-photo" type="file" accept="image/*" onchange="prevImg(this,'t-prev')"/>
+        <img id="t-prev" class="prev"/></div>
+      <div class="fg"><label>Төлөв</label>
+        <select id="t-active"><option value="1">Идэвхтэй</option><option value="0">Идэвхгүй</option></select>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeM('m-teacher')">Болих</button><button class="btn btn-green" onclick="saveTeacher()">💾 Хадгалах</button></div>
+  </div>
+</div>
+
+<!-- Class -->
+<div class="ov" id="m-class">
+  <div class="modal">
+    <div class="mh"><h3 id="cls-m-title">Анги нэмэх</h3><button class="mx" onclick="closeM('m-class')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="cls-id"/>
+      <div class="form2">
+        <div class="fg"><label>Анги (1-12) *</label><input id="cls-grade" type="number" min="1" max="12"/></div>
+        <div class="fg"><label>Бүлэг *</label><input id="cls-sec" placeholder="а"/></div>
+        <div class="fg"><label>Хичээлийн жил *</label><input id="cls-year" type="number" min="2020"/></div>
+      </div>
+      <div class="fg"><label>Анги удирдсан багш</label>
+        <select id="cls-teacher"><option value="">— Сонгох —</option></select>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeM('m-class')">Болих</button><button class="btn btn-green" onclick="saveClass()">💾 Хадгалах</button></div>
+  </div>
+</div>
+
+<!-- News -->
+<div class="ov" id="m-news">
+  <div class="modal" style="max-width:620px">
+    <div class="mh"><h3 id="n-m-title">Мэдээ нэмэх</h3><button class="mx" onclick="closeM('m-news')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="n-id"/>
+      <div class="fg"><label>Гарчиг *</label><input id="n-title"/></div>
+      <div class="fg"><label>Агуулга *</label><textarea id="n-content" style="min-height:130px"></textarea></div>
+      <div class="form2">
+        <div class="fg"><label>Огноо *</label><input id="n-date" type="date"/></div>
+        <div class="fg"><label>Төлөв</label><select id="n-pub"><option value="1">Нийтлэх</option><option value="0">Ноорог</option></select></div>
+      </div>
+      <div class="fg"><label>Зураг</label><input id="n-photo" type="file" accept="image/*" onchange="prevImg(this,'n-prev')"/>
+        <img id="n-prev" class="prev"/></div>
+    </div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeM('m-news')">Болих</button><button class="btn btn-green" onclick="saveNews()">💾 Хадгалах</button></div>
+  </div>
+</div>
+
+<!-- Achievement -->
+<div class="ov" id="m-ach">
+  <div class="modal">
+    <div class="mh"><h3 id="ach-m-title">Амжилт нэмэх</h3><button class="mx" onclick="closeM('m-ach')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="a-id"/>
+      <div class="fg"><label>Тэмцээний нэр *</label><input id="a-comp"/></div>
+      <div class="form2">
+        <div class="fg"><label>Сурагчийн нэр *</label><input id="a-stu"/></div>
+        <div class="fg"><label>Шагнал *</label><input id="a-award"/></div>
+        <div class="fg"><label>Анги</label><input id="a-grade" type="number" min="1" max="12" placeholder="7"/></div>
+        <div class="fg"><label>Бүлэг</label><input id="a-sec" placeholder="а"/></div>
+        <div class="fg"><label>Байр</label><input id="a-place" type="number" min="1"/></div>
+        <div class="fg"><label>Он *</label><input id="a-year" type="number" min="2019"/></div>
+        <div class="fg"><label>Түвшин</label>
+          <select id="a-level"><option value="school">Сургуулийн</option><option value="district">Дүүргийн</option><option value="city">Хотын</option><option value="national">Улсын</option><option value="international">Олон улсын</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeM('m-ach')">Болих</button><button class="btn btn-green" onclick="saveAch()">💾 Хадгалах</button></div>
+  </div>
+</div>
+
+<!-- Announcement -->
+<div class="ov" id="m-ann">
+  <div class="modal">
+    <div class="mh"><h3 id="ann-m-title">Зар нэмэх</h3><button class="mx" onclick="closeM('m-ann')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="an-id"/>
+      <div class="fg"><label>Гарчиг *</label><input id="an-title"/></div>
+      <div class="fg"><label>Агуулга *</label><textarea id="an-content"></textarea></div>
+      <div class="form2">
+        <div class="fg"><label>Огноо *</label><input id="an-date" type="date"/></div>
+        <div class="fg"><label>Дуусах огноо</label><input id="an-exp" type="date"/></div>
+        <div class="fg"><label>Төлөв</label><select id="an-active"><option value="1">Идэвхтэй</option><option value="0">Идэвхгүй</option></select></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeM('m-ann')">Болих</button><button class="btn btn-green" onclick="saveAnn()">💾 Хадгалах</button></div>
+  </div>
+</div>
+
+<!-- Album -->
+<div class="ov" id="m-album">
+  <div class="modal">
+    <div class="mh"><h3>Цомог нэмэх</h3><button class="mx" onclick="closeM('m-album')">✕</button></div>
+    <div class="mb">
+      <div class="fg"><label>Нэр *</label><input id="al-name"/></div>
+      <div class="fg"><label>Огноо</label><input id="al-date" type="date"/></div>
+      <div class="fg"><label>Тайлбар</label><textarea id="al-desc"></textarea></div>
+    </div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeM('m-album')">Болих</button><button class="btn btn-green" onclick="saveAlbum()">💾 Нэмэх</button></div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="ov" id="m-faq">
+  <div class="modal" style="max-width:620px">
+    <div class="mh"><h3 id="faq-m-title">FAQ нэмэх</h3><button class="mx" onclick="closeM('m-faq')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="fq-id"/>
+      <div class="fg"><label>Асуулт (МН) *</label><textarea id="fq-q"></textarea></div>
+      <div class="fg"><label>Хариулт (МН) *</label><textarea id="fq-a"></textarea></div>
+      <div class="fg"><label>Question (EN)</label><textarea id="fq-qe"></textarea></div>
+      <div class="fg"><label>Answer (EN)</label><textarea id="fq-ae"></textarea></div>
+      <div class="fg"><label>Дараалал</label><input id="fq-ord" type="number" value="0"/></div>
+    </div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeM('m-faq')">Болих</button><button class="btn btn-green" onclick="saveFaq()">💾 Хадгалах</button></div>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div class="ov" id="m-confirm">
+  <div class="modal" style="max-width:400px">
+    <div class="mh"><h3>Устгах уу?</h3><button class="mx" onclick="closeM('m-confirm')">✕</button></div>
+    <div class="mb"><p id="confirm-msg" style="color:var(--muted);font-size:.9rem"></p></div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeM('m-confirm')">Болих</button><button class="btn btn-red" id="confirm-ok">Устгах</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().split('T')[0];
+function toast(msg, type='ok') {
+  const t=$('toast'); t.textContent=msg; t.className=`show ${type}`;
+  setTimeout(()=>t.className='',3200);
+}
+function openM(id)  { $(id).classList.add('open');    }
+function closeM(id) { $(id).classList.remove('open'); }
+function confirm_(msg, fn) {
+  $('confirm-msg').textContent=msg;
+  $('confirm-ok').onclick=()=>{closeM('m-confirm');fn()};
+  openM('m-confirm');
+}
+function prevImg(inp, prevId) {
+  const p=$(prevId);
+  if(inp.files?.[0]){const r=new FileReader();r.onload=e=>{p.src=e.target.result;p.style.display='block'};r.readAsDataURL(inp.files[0]);}
+}
+function fmtDate(d){return d?new Date(d).toLocaleDateString('mn-MN'):'—'}
+
+/* ── API ── */
+async function api(url, opts={}) {
+  const r = await fetch(url, {credentials:'include', ...opts});
+  if(r.status===401){showLogin();return null;}
+  return r.json();
+}
+async function apiForm(url, method, fd) {
+  const r = await fetch(url,{method,body:fd,credentials:'include'});
+  if(r.status===401){showLogin();return null;}
+  return r.json();
+}
+async function apiJson(url, method, data) {
+  const r = await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data),credentials:'include'});
+  if(r.status===401){showLogin();return null;}
+  return r.json();
+}
+
+const DEGM = {bachelor:'Бакалавр',master:'Магистр',doctorate:'Доктор',other:'Бусад'};
+const LVLM = {school:'Сургуулийн',district:'Дүүргийн',city:'Хотын',national:'Улсын',international:'Олон улсын'};
+
+/* ── AUTH ── */
+function showLogin(){ $('app').style.display='none'; $('login').style.display='flex'; }
+async function doLogin(){
+  const u=$('l-user').value, p=$('l-pass').value;
+  if(!u||!p) return;
+  const res = await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p}),credentials:'include'});
+  const d = await res.json();
+  if(d.success){
+    $('login').style.display='none'; $('app').style.display='block';
+    $('u-name').textContent=d.username; $('u-av').textContent=d.username[0].toUpperCase();
+    initAdmin();
+  } else {
+    const e=$('l-err'); e.textContent='Нэвтрэх нэр эсвэл нууц үг буруу.'; e.style.display='block';
+  }
+}
+async function doLogout(){
+  await fetch('/api/admin/logout',{method:'POST',credentials:'include'});
+  showLogin();
+}
+async function checkSession(){
+  const r = await fetch('/api/admin/me',{credentials:'include'});
+  if(r.ok){
+    const d=await r.json();
+    $('login').style.display='none'; $('app').style.display='block';
+    $('u-name').textContent=d.username; $('u-av').textContent=d.username[0].toUpperCase();
+    initAdmin();
+  }
+}
+
+/* ── NAV ── */
+function showPage(name, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  $('page-'+name).classList.add('active'); btn.classList.add('active');
+  ({school:loadAdminSchool,director:loadAdminDirector,teachers:loadAdminTeachers,
+    classes:loadAdminClasses,news:loadAdminNews,ach:loadAdminAch,ann:loadAdminAnn,
+    gallery:loadAdminGallery,faq:loadAdminFaq,grads:loadAdminGrads})[name]?.();
+}
+
+/* ── INIT ── */
+async function initAdmin(){ loadDash(); }
+
+/* ── DASHBOARD ── */
+async function loadDash(){
+  const s = await api('/api/admin/stats');
+  if(!s) return;
+  $('dash-stats').innerHTML=[
+    {ico:'👩‍🏫',num:s.teachers,lbl:'Багш нар'},
+    {ico:'📚',num:s.classes,lbl:'Ангиуд'},
+    {ico:'📰',num:s.published_news+'/'+s.news,lbl:'Нийтлэгдсэн'},
+    {ico:'📢',num:s.announcements,lbl:'Зар'},
+    {ico:'🏆',num:s.achievements,lbl:'Амжилт'},
+    {ico:'👨‍🎓',num:s.graduates_pending,lbl:'Хүлээгдэж буй'},
+  ].map(s=>`<div class="stat-card"><div class="s-ico">${s.ico}</div><div><div class="s-num">${s.num}</div><div class="s-lbl">${s.lbl}</div></div></div>`).join('');
+  const news = await api('/api/admin/news?page=1&per_page=5');
+  $('dash-news').innerHTML=(news?.items||[]).map(n=>`
+    <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:.88rem;font-weight:600;color:var(--navy)">${n.title}</span>
+      <span style="font-size:.75rem;color:var(--muted)">${fmtDate(n.news_date)}</span>
+    </div>`).join('');
+}
+
+/* ── SCHOOL ── */
+let schoolPhotos=[];
+async function loadAdminSchool(){
+  const d=await api('/api/admin/school'); if(!d) return;
+  const f=$('school-form');
+  ['full_name','founded_date','vision','mission','values_text','district','street','building','phone','email','facebook_url'].forEach(k=>{if(f[k]&&d[k])f[k].value=d[k]});
+  loadSchoolPhotos();
+}
+async function saveSchool(e){ e.preventDefault(); const fd=new FormData($('school-form')); const r=await apiForm('/api/admin/school','PUT',fd); r?.success?toast('Хадгалагдлаа ✓'):toast('Алдаа гарлаа','err'); }
+async function loadSchoolPhotos(){
+  schoolPhotos=await api('/api/school-photos')||[];
+  $('school-photo-grid').innerHTML=schoolPhotos.map(p=>`<div class="photo-cell"><img src="${p.photo_path}"/><button class="photo-del" onclick="delSchoolPhoto(${p.id})">✕</button></div>`).join('')||'<span style="color:var(--muted);font-size:.85rem">Зураг байхгүй</span>';
+}
+async function uploadSchoolPhotos(inp){
+  for(const f of inp.files){const fd=new FormData();fd.append('photo',f);fd.append('photo_type','exterior');await apiForm('/api/admin/school-photos','POST',fd);}
+  loadSchoolPhotos(); toast('Нэмэгдлээ ✓');
+}
+async function delSchoolPhoto(id){confirm_('Зургийг устгах уу?',async()=>{await api('/api/admin/school-photos/'+id,{method:'DELETE'});loadSchoolPhotos();toast('Устгагдлаа');});}
+
+/* ── DIRECTOR ── */
+async function loadAdminDirector(){
+  const d=await api('/api/admin/director'); if(!d) return;
+  const f=$('dir-form');
+  ['full_name','biography','greeting_text'].forEach(k=>{if(f[k]&&d[k])f[k].value=d[k]});
+}
+async function saveDirector(e){ e.preventDefault(); const fd=new FormData($('dir-form')); const r=await apiForm('/api/admin/director','PUT',fd); r?.success?toast('Хадгалагдлаа ✓'):toast('Алдаа','err'); }
+
+/* ── TEACHERS ── */
+let tData=[];
+async function loadAdminTeachers(){
+  tData=await api('/api/admin/teachers')||[];
+  $('t-count').textContent=`Нийт ${tData.length} багш`;
+  $('t-tbody').innerHTML=tData.map(t=>`<tr>
+    <td>${t.photo_path?`<img src="${t.photo_path}" class="thumb">`:`<div class="thph">👤</div>`}</td>
+    <td><strong>${t.full_name}</strong></td><td>${t.subject}</td>
+    <td>${DEGM[t.degree]||t.degree}</td><td>${t.experience_years} жил</td>
+    <td><span class="bdg ${t.is_active?'b-on':'b-off'}">${t.is_active?'Идэвхтэй':'Идэвхгүй'}</span></td>
+    <td class="acts">
+      <button class="btn btn-warn" onclick="openTeacherM(${t.id})">✏️</button>
+      <button class="btn btn-red" onclick="delTeacher(${t.id},'${t.full_name}')">🗑️</button>
+    </td>
+  </tr>`).join('');
+}
+function openTeacherM(id=null){
+  $('t-m-title').textContent=id?'Багш засах':'Багш нэмэх'; $('t-id').value=id||'';
+  if(id){const t=tData.find(x=>x.id===id);if(t){$('t-name').value=t.full_name;$('t-subj').value=t.subject;$('t-deg').value=t.degree;$('t-exp').value=t.experience_years;$('t-active').value=t.is_active?'1':'0';}}
+  else{['t-name','t-subj'].forEach(i=>$(i).value='');$('t-exp').value=0;$('t-active').value='1';}
+  $('t-prev').style.display='none'; openM('m-teacher');
+}
+async function saveTeacher(){
+  const id=$('t-id').value; const fd=new FormData();
+  fd.append('full_name',$('t-name').value); fd.append('subject',$('t-subj').value);
+  fd.append('degree',$('t-deg').value); fd.append('experience_years',$('t-exp').value);
+  fd.append('is_active',$('t-active').value);
+  const ph=$('t-photo').files[0]; if(ph) fd.append('photo',ph);
+  const r=await apiForm(id?`/api/admin/teachers/${id}`:'/api/admin/teachers',id?'PUT':'POST',fd);
+  if(r?.success){closeM('m-teacher');loadAdminTeachers();toast('Хадгалагдлаа ✓');}else toast('Алдаа','err');
+}
+function delTeacher(id,name){confirm_(`"${name}" устгах уу?`,async()=>{await api(`/api/admin/teachers/${id}`,{method:'DELETE'});loadAdminTeachers();toast('Устгагдлаа');});}
+
+/* ── CLASSES ── */
+let cData=[];
+async function loadAdminClasses(){
+  cData=await api('/api/admin/classes')||[];
+  $('cls-tbody').innerHTML=cData.map(c=>`<tr>
+    <td>${c.grade}-р анги</td><td>${c.section}</td>
+    <td>${c.teacher_name||'—'}</td><td>${c.academic_year}</td>
+    <td class="acts">
+      <button class="btn btn-warn" onclick="openClassM(${c.id})">✏️</button>
+      <button class="btn btn-red" onclick="delClass(${c.id})">🗑️</button>
+    </td>
+  </tr>`).join('');
+}
+async function openClassM(id=null){
+  $('cls-m-title').textContent=id?'Анги засах':'Анги нэмэх'; $('cls-id').value=id||'';
+  const ts=await api('/api/admin/teachers')||[];
+  $('cls-teacher').innerHTML='<option value="">— Сонгох —</option>'+ts.map(t=>`<option value="${t.id}">${t.full_name}</option>`).join('');
+  if(id){const c=cData.find(x=>x.id===id);if(c){$('cls-grade').value=c.grade;$('cls-sec').value=c.section;$('cls-year').value=c.academic_year;$('cls-teacher').value=c.teacher_id||'';}}
+  else{['cls-grade','cls-sec'].forEach(i=>$(i).value='');$('cls-year').value=new Date().getFullYear();}
+  openM('m-class');
+}
+async function saveClass(){
+  const id=$('cls-id').value;
+  const d={grade:+$('cls-grade').value,section:$('cls-sec').value,academic_year:+$('cls-year').value,teacher_id:$('cls-teacher').value||null};
+  const r=await apiJson(id?`/api/admin/classes/${id}`:'/api/admin/classes',id?'PUT':'POST',d);
+  if(r?.success){closeM('m-class');loadAdminClasses();toast('Хадгалагдлаа ✓');}else toast('Алдаа','err');
+}
+function delClass(id){confirm_('Ангийг устгах уу?',async()=>{await api(`/api/admin/classes/${id}`,{method:'DELETE'});loadAdminClasses();toast('Устгагдлаа');});}
+
+/* ── NEWS ── */
+let nData=[];
+async function loadAdminNews(){
+  const d=await api('/api/admin/news'); nData=d?.items||[];
+  $('news-tbody').innerHTML=nData.map(n=>`<tr>
+    <td>${n.photo_path?`<img src="${n.photo_path}" class="thumb">`:`<div class="thph">📰</div>`}</td>
+    <td><strong>${n.title}</strong></td><td>${fmtDate(n.news_date)}</td>
+    <td><span class="bdg ${n.is_published?'b-pub':'b-draft'}">${n.is_published?'Нийтлэгдсэн':'Ноорог'}</span></td>
+    <td class="acts">
+      <button class="btn btn-warn" onclick="openNewsM(${n.id})">✏️</button>
+      <button class="btn btn-red" onclick="delNews(${n.id})">🗑️</button>
+    </td>
+  </tr>`).join('');
+}
+function openNewsM(id=null){
+  $('n-m-title').textContent=id?'Мэдээ засах':'Мэдээ нэмэх'; $('n-id').value=id||'';
+  if(id){const n=nData.find(x=>x.id===id);if(n){$('n-title').value=n.title;$('n-content').value=n.content;$('n-date').value=n.news_date;$('n-pub').value=n.is_published?'1':'0';}}
+  else{['n-title','n-content'].forEach(i=>$(i).value='');$('n-date').value=today();$('n-pub').value='1';}
+  $('n-prev').style.display='none'; openM('m-news');
+}
+async function saveNews(){
+  const id=$('n-id').value; const fd=new FormData();
+  fd.append('title',$('n-title').value); fd.append('content',$('n-content').value);
+  fd.append('news_date',$('n-date').value); fd.append('is_published',$('n-pub').value);
+  const ph=$('n-photo').files[0]; if(ph) fd.append('photo',ph);
+  const r=await apiForm(id?`/api/admin/news/${id}`:'/api/admin/news',id?'PUT':'POST',fd);
+  if(r?.success){closeM('m-news');loadAdminNews();toast('Хадгалагдлаа ✓');}else toast('Алдаа','err');
+}
+function delNews(id){confirm_('Мэдээг устгах уу?',async()=>{await api(`/api/admin/news/${id}`,{method:'DELETE'});loadAdminNews();toast('Устгагдлаа');});}
+
+/* ── ACHIEVEMENTS ── */
+let aData=[];
+async function loadAdminAch(){
+  aData=await api('/api/admin/achievements')||[];
+  $('ach-tbody').innerHTML=aData.map(a=>`<tr>
+    <td>${a.competition}</td><td>${a.student_name}</td>
+    <td>${a.class_grade&&a.class_section?`${a.class_grade}${a.class_section}`:'—'}</td>
+    <td>${a.award}</td><td>${a.place_number||'—'}</td><td>${a.achieved_year}</td>
+    <td>${LVLM[a.level]||a.level}</td>
+    <td class="acts">
+      <button class="btn btn-warn" onclick="openAchM(${a.id})">✏️</button>
+      <button class="btn btn-red" onclick="delAch(${a.id})">🗑️</button>
+    </td>
+  </tr>`).join('');
+}
+function openAchM(id=null){
+  $('ach-m-title').textContent=id?'Амжилт засах':'Амжилт нэмэх'; $('a-id').value=id||'';
+  if(id){const a=aData.find(x=>x.id===id);if(a){$('a-comp').value=a.competition;$('a-stu').value=a.student_name;$('a-award').value=a.award;$('a-grade').value=a.class_grade||'';$('a-sec').value=a.class_section||'';$('a-place').value=a.place_number||'';$('a-year').value=a.achieved_year;$('a-level').value=a.level;}}
+  else{['a-comp','a-stu','a-award','a-grade','a-sec','a-place'].forEach(i=>$(i).value='');$('a-year').value=new Date().getFullYear();}
+  openM('m-ach');
+}
+async function saveAch(){
+  const id=$('a-id').value;
+  const d={competition:$('a-comp').value,student_name:$('a-stu').value,award:$('a-award').value,class_grade:$('a-grade').value||null,class_section:$('a-sec').value||null,place_number:$('a-place').value||null,achieved_year:+$('a-year').value,level:$('a-level').value};
+  const r=await apiJson(id?`/api/admin/achievements/${id}`:'/api/admin/achievements',id?'PUT':'POST',d);
+  if(r?.success){closeM('m-ach');loadAdminAch();toast('Хадгалагдлаа ✓');}else toast('Алдаа','err');
+}
+function delAch(id){confirm_('Амжилтыг устгах уу?',async()=>{await api(`/api/admin/achievements/${id}`,{method:'DELETE'});loadAdminAch();toast('Устгагдлаа');});}
+
+/* ── ANNOUNCEMENTS ── */
+let anData=[];
+async function loadAdminAnn(){
+  anData=await api('/api/admin/announcements')||[];
+  $('ann-tbody').innerHTML=anData.map(a=>`<tr>
+    <td><strong>${a.title}</strong></td><td>${fmtDate(a.published_date)}</td><td>${fmtDate(a.expires_date)}</td>
+    <td><span class="bdg ${a.is_active?'b-on':'b-off'}">${a.is_active?'Идэвхтэй':'Идэвхгүй'}</span></td>
+    <td class="acts">
+      <button class="btn btn-warn" onclick="openAnnM(${a.id})">✏️</button>
+      <button class="btn btn-red" onclick="delAnn(${a.id})">🗑️</button>
+    </td>
+  </tr>`).join('');
+}
+function openAnnM(id=null){
+  $('ann-m-title').textContent=id?'Зар засах':'Зар нэмэх'; $('an-id').value=id||'';
+  if(id){const a=anData.find(x=>x.id===id);if(a){$('an-title').value=a.title;$('an-content').value=a.content;$('an-date').value=a.published_date;$('an-exp').value=a.expires_date||'';$('an-active').value=a.is_active?'1':'0';}}
+  else{['an-title','an-content'].forEach(i=>$(i).value='');$('an-date').value=today();$('an-exp').value='';$('an-active').value='1';}
+  openM('m-ann');
+}
+async function saveAnn(){
+  const id=$('an-id').value;
+  const d={title:$('an-title').value,content:$('an-content').value,published_date:$('an-date').value,expires_date:$('an-exp').value||null,is_active:+$('an-active').value};
+  const r=await apiJson(id?`/api/admin/announcements/${id}`:'/api/admin/announcements',id?'PUT':'POST',d);
+  if(r?.success){closeM('m-ann');loadAdminAnn();toast('Хадгалагдлаа ✓');}else toast('Алдаа','err');
+}
+function delAnn(id){confirm_('Зарыг устгах уу?',async()=>{await api(`/api/admin/announcements/${id}`,{method:'DELETE'});loadAdminAnn();toast('Устгагдлаа');});}
+
+/* ── GALLERY ── */
+let gData=[];
+async function loadAdminGallery(){
+  gData=await api('/api/admin/gallery/albums')||[];
+  $('gallery-content').innerHTML=gData.map(a=>`
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span>📁 ${a.name} <span style="font-size:.75rem;color:var(--muted);font-weight:400">${a.event_date?fmtDate(a.event_date):''}</span></span>
+        <div style="display:flex;gap:8px">
+          <label class="btn btn-green" style="cursor:pointer;display:inline-flex;align-items:center;gap:5px">
+            📸 Зураг нэмэх<input type="file" accept="image/*" multiple style="display:none" onchange="uploadGalleryPhotos(${a.id},this)">
+          </label>
+          <button class="btn btn-red" onclick="delAlbum(${a.id},'${a.name}')">🗑️ Цомог</button>
+        </div>
+      </div>
+      <div class="photo-grid">
+        ${a.photos.map(p=>`<div class="photo-cell"><img src="${p.photo_path}"/><button class="photo-del" onclick="delGalleryPhoto(${p.id})">✕</button></div>`).join('')}
+      </div>
+    </div>`).join('') || '<div class="card" style="text-align:center;color:var(--muted);padding:40px">Цомог байхгүй</div>';
+}
+function openAlbumM(){ openM('m-album'); }
+async function saveAlbum(){
+  const r=await apiJson('/api/admin/gallery/albums','POST',{name:$('al-name').value,event_date:$('al-date').value||null,description:$('al-desc').value});
+  if(r?.success){closeM('m-album');loadAdminGallery();toast('Нэмэгдлээ ✓');}else toast('Алдаа','err');
+}
+async function uploadGalleryPhotos(albumId, inp){
+  for(const f of inp.files){const fd=new FormData();fd.append('album_id',albumId);fd.append('photo',f);await apiForm('/api/admin/gallery/photos','POST',fd);}
+  loadAdminGallery(); toast('Нэмэгдлээ ✓');
+}
+function delAlbum(id,name){confirm_(`"${name}" цомгийг устгах уу?`,async()=>{await api(`/api/admin/gallery/albums/${id}`,{method:'DELETE'});loadAdminGallery();toast('Устгагдлаа');});}
+async function delGalleryPhoto(id){const r=await api(`/api/admin/gallery/photos/${id}`,{method:'DELETE'});if(r?.success){loadAdminGallery();toast('Устгагдлаа');}}
+
+/* ── FAQ ── */
+let fqData=[];
+async function loadAdminFaq(){
+  fqData=await api('/api/admin/faq')||[];
+  $('faq-tbody').innerHTML=fqData.map(f=>`<tr>
+    <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.question}</td>
+    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)">${f.question_en||'—'}</td>
+    <td>${f.sort_order}</td>
+    <td><span class="bdg ${f.is_active?'b-on':'b-off'}">${f.is_active?'Идэвхтэй':'Идэвхгүй'}</span></td>
+    <td class="acts">
+      <button class="btn btn-warn" onclick="openFaqM(${f.id})">✏️</button>
+      <button class="btn btn-red" onclick="delFaq(${f.id})">🗑️</button>
+    </td>
+  </tr>`).join('');
+}
+function openFaqM(id=null){
+  $('faq-m-title').textContent=id?'FAQ засах':'FAQ нэмэх'; $('fq-id').value=id||'';
+  if(id){const f=fqData.find(x=>x.id===id);if(f){$('fq-q').value=f.question;$('fq-a').value=f.answer;$('fq-qe').value=f.question_en||'';$('fq-ae').value=f.answer_en||'';$('fq-ord').value=f.sort_order;}}
+  else{['fq-q','fq-a','fq-qe','fq-ae'].forEach(i=>$(i).value='');$('fq-ord').value=0;}
+  openM('m-faq');
+}
+async function saveFaq(){
+  const id=$('fq-id').value;
+  const d={question:$('fq-q').value,answer:$('fq-a').value,question_en:$('fq-qe').value||null,answer_en:$('fq-ae').value||null,sort_order:+$('fq-ord').value};
+  const r=await apiJson(id?`/api/admin/faq/${id}`:'/api/admin/faq',id?'PUT':'POST',d);
+  if(r?.success){closeM('m-faq');loadAdminFaq();toast('Хадгалагдлаа ✓');}else toast('Алдаа','err');
+}
+function delFaq(id){confirm_('FAQ устгах уу?',async()=>{await api(`/api/admin/faq/${id}`,{method:'DELETE'});loadAdminFaq();toast('Устгагдлаа');});}
+
+/* ── GRADUATES ── */
+async function loadAdminGrads(){
+  const data=await api('/api/admin/graduates')||[];
+  $('grad-tbody').innerHTML=data.map(g=>`<tr>
+    <td><strong>${g.full_name}</strong></td><td>${g.graduated_year}</td>
+    <td>${g.current_place||'—'}</td><td>${fmtDate(g.submitted_at)}</td>
+    <td><span class="bdg ${g.is_approved?'b-on':'b-draft'}">${g.is_approved?'Зөвшөөрсөн':'Хүлээгдэж буй'}</span></td>
+    <td class="acts">
+      ${!g.is_approved?`<button class="btn btn-green" onclick="approveGrad(${g.id})">✅ Зөвшөөрөх</button>`:''}
+      <button class="btn btn-red" onclick="delGrad(${g.id})">🗑️</button>
+    </td>
+  </tr>`).join('');
+}
+async function approveGrad(id){const r=await api(`/api/admin/graduates/${id}/approve`,{method:'POST'});if(r?.success){loadAdminGrads();toast('Зөвшөөрлөө ✓');}}
+function delGrad(id){confirm_('Устгах уу?',async()=>{await api(`/api/admin/graduates/${id}`,{method:'DELETE'});loadAdminGrads();toast('Устгагдлаа');});}
+
+checkSession();
+</script>
+</body>
+</html>
