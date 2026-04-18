@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="mn" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Долоодой Сургууль</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/static/css/main.css"/>
+</head>
+<body>
+
+<nav id="navbar">
+  <a class="nav-logo" href="#home">
+    <div class="logo-c" id="nav-logo">Д</div>
+    <span id="nav-name">Долоодой Сургууль</span>
+  </a>
+  <div class="nav-links">
+    <a href="#about"         data-mn="Тухай"     data-en="About">Тухай</a>
+    <a href="#director"      data-mn="Захирал"   data-en="Director">Захирал</a>
+    <a href="#teachers"      data-mn="Багш нар"  data-en="Teachers">Багш нар</a>
+    <a href="#classes"       data-mn="Ангиуд"    data-en="Classes">Ангиуд</a>
+    <a href="#news"          data-mn="Мэдээ"     data-en="News">Мэдээ</a>
+    <a href="#achievements"  data-mn="Амжилт"    data-en="Awards">Амжилт</a>
+    <a href="#leaderboard"   data-mn="TOP-10"    data-en="TOP-10">TOP-10</a>
+    <a href="#announcements" data-mn="Зар"       data-en="Notices">Зар</a>
+    <a href="#gallery"       data-mn="Галерей"   data-en="Gallery">Галерей</a>
+    <a href="#graduates"     data-mn="Төгсөгчид" data-en="Alumni">Төгсөгчид</a>
+    <a href="#faq"           data-mn="FAQ"       data-en="FAQ">FAQ</a>
+    <a href="#contact"       data-mn="Холбоо"    data-en="Contact">Холбоо</a>
+  </div>
+  <div class="nav-actions">
+    <button id="dark-btn" onclick="toggleDark()">🌙</button>
+    <button id="lang-btn" onclick="toggleLang()">EN</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="hero">
+  <div class="hero-dots"></div>
+  <div class="hero-content fade-in">
+    <div class="hero-badge" id="hero-badge">Дорнод аймаг · Хэрлэн сум · 2019</div>
+    <h1 id="hero-h1">Долоодой <span>Сургууль</span></h1>
+    <p id="hero-p">Мэдлэг, ур чадвар, хүмүүжлийн уялдаа холбоогоор ирээдүйн иргэдийг төлөвшүүлэх.</p>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hnum">300+</div><div class="hlbl" data-mn="Суралцагч" data-en="Students">Суралцагч</div></div>
+      <div class="hstat"><div class="hnum" id="hs-t">—</div><div class="hlbl" data-mn="Багш" data-en="Teachers">Багш</div></div>
+      <div class="hstat"><div class="hnum" id="hs-c">—</div><div class="hlbl" data-mn="Ангиуд" data-en="Classes">Ангиуд</div></div>
+      <div class="hstat"><div class="hnum" id="hs-a">—</div><div class="hlbl" data-mn="Амжилт" data-en="Awards">Амжилт</div></div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="bg-alt">
+  <div class="inner">
+    <div class="about-grid fade-in">
+      <div class="about-img-wrap">
+        <div class="about-img" id="about-img">🏫</div>
+        <div class="about-bdg"><span id="founded-yr">2019</span><small data-mn="Үүсгэн байгуулагдсан" data-en="Founded">Үүсгэн байгуулагдсан</small></div>
+      </div>
+      <div>
+        <div class="stag" data-mn="Бидний тухай" data-en="About Us">Бидний тухай</div>
+        <h2 class="stitle" id="about-name">Долоодой Сургууль</h2>
+        <p class="ssub" id="about-mission">...</p>
+        <div class="arow"><strong data-mn="Алсын Харaa:" data-en="Vision:">Алсын Харaa:</strong> <span id="about-vision">—</span></div>
+        <div class="arow" style="margin-top:8px"><strong data-mn="Үнэт Зүйлс:" data-en="Values:">Үнэт Зүйлс:</strong> <span id="about-values">—</span></div>
+        <div class="icards">
+          <div class="icard"><div class="icl" data-mn="Утас" data-en="Phone">Утас</div><div class="icv" id="ic-phone">—</div></div>
+          <div class="icard"><div class="icl" data-mn="И-мэйл" data-en="Email">И-мэйл</div><div class="icv" id="ic-email">—</div></div>
+          <div class="icard"><div class="icl" data-mn="Дүүрэг" data-en="District">Дүүрэг</div><div class="icv" id="ic-district">—</div></div>
+          <div class="icard"><div class="icl" data-mn="Хаяг" data-en="Address">Хаяг</div><div class="icv" id="ic-address">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIRECTOR -->
+<section id="director">
+  <div class="inner fade-in">
+    <div class="stag" data-mn="Удирдлага" data-en="Leadership">Удирдлага</div>
+    <h2 class="stitle" data-mn="Захирлын Мэндчилгээ" data-en="Director's Message">Захирлын Мэндчилгээ</h2>
+    <div class="dir-card">
+      <div id="dir-photo"><div class="dir-ph">👤</div></div>
+      <div>
+        <h3 class="dir-name" id="dir-name">—</h3>
+        <div class="dir-role" data-mn="Сургуулийн Захирал" data-en="School Director">Сургуулийн Захирал</div>
+        <blockquote class="dir-quote" id="dir-quote">—</blockquote>
+        <p class="dir-bio" id="dir-bio">—</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEACHERS -->
+<section id="teachers" class="bg-alt">
+  <div class="inner">
+    <div class="stag" data-mn="Манай баг" data-en="Our Team">Манай баг</div>
+    <h2 class="stitle" data-mn="Багш Нар" data-en="Teachers">Багш Нар</h2>
+    <div class="t-grid fade-in" id="t-grid">
+      <div class="skel" style="height:280px;border-radius:12px"></div>
+      <div class="skel" style="height:280px;border-radius:12px"></div>
+      <div class="skel" style="height:280px;border-radius:12px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CLASSES -->
+<section id="classes">
+  <div class="inner">
+    <div class="stag" data-mn="Сурлага" data-en="Academics">Сурлага</div>
+    <h2 class="stitle" data-mn="Ангиуд" data-en="Classes">Ангиуд</h2>
+    <div class="gtabs fade-in" id="gtabs"></div>
+    <div class="tbl-wrap fade-in">
+      <table class="dtable">
+        <thead><tr>
+          <th data-mn="Анги" data-en="Grade">Анги</th>
+          <th data-mn="Бүлэг" data-en="Section">Бүлэг</th>
+          <th data-mn="Анги удирдсан багш" data-en="Class Teacher">Анги удирдсан багш</th>
+          <th data-mn="Хичээлийн жил" data-en="Year">Хичээлийн жил</th>
+          <th data-mn="Шилдэг амжилт" data-en="Top Achievement">Шилдэг амжилт</th>
+        </tr></thead>
+        <tbody id="cls-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section id="news" class="bg-alt">
+  <div class="inner">
+    <div class="stag" data-mn="Сүүлийн мэдээ" data-en="Latest News">Сүүлийн мэдээ</div>
+    <h2 class="stitle" data-mn="Мэдээ Мэдээлэл" data-en="News">Мэдээ Мэдээлэл</h2>
+    <div class="n-grid fade-in" id="n-grid">
+      <div class="skel" style="height:320px;border-radius:12px"></div>
+      <div class="skel" style="height:320px;border-radius:12px"></div>
+      <div class="skel" style="height:320px;border-radius:12px"></div>
+    </div>
+    <div id="n-pager" class="pager"></div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="inner">
+    <div class="stag" data-mn="Амжилт" data-en="Achievements">Амжилт</div>
+    <h2 class="stitle" data-mn="Шагнал & Амжилт" data-en="Awards">Шагнал & Амжилт</h2>
+    <div class="frow fade-in" id="ach-filter"></div>
+    <div class="ag-grid fade-in" id="ag-grid">
+      <div class="skel" style="height:160px;border-radius:12px"></div>
+      <div class="skel" style="height:160px;border-radius:12px"></div>
+      <div class="skel" style="height:160px;border-radius:12px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- LEADERBOARD -->
+<section id="leaderboard" class="bg-alt">
+  <div class="inner">
+    <div class="stag" data-mn="Шилдэг сурагчид" data-en="Top Students">Шилдэг сурагчид</div>
+    <h2 class="stitle" data-mn="🏆 Амжилтын TOP-10" data-en="🏆 Achievement TOP-10">🏆 Амжилтын TOP-10</h2>
+    <div class="lb-ctrl fade-in">
+      <select id="lb-year" onchange="loadLeaderboard()">
+        <option value="" data-mn="Бүх жил" data-en="All years">Бүх жил</option>
+      </select>
+    </div>
+    <div id="lb-body" class="fade-in"></div>
+  </div>
+</section>
+
+<!-- ANNOUNCEMENTS -->
+<section id="announcements">
+  <div class="inner">
+    <div class="stag" data-mn="Мэдэгдэл" data-en="Notices">Мэдэгдэл</div>
+    <h2 class="stitle" data-mn="Зар & Мэдэгдэл" data-en="Announcements">Зар & Мэдэгдэл</h2>
+    <div class="ann-list fade-in" id="ann-list"></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery" class="bg-alt">
+  <div class="inner">
+    <div class="stag" data-mn="Зургийн цомог" data-en="Photo Gallery">Зургийн цомог</div>
+    <h2 class="stitle" data-mn="Галерей" data-en="Gallery">Галерей</h2>
+    <div class="atabs fade-in" id="atabs"></div>
+    <div class="gal-grid fade-in" id="gal-grid"></div>
+  </div>
+</section>
+
+<!-- GRADUATES -->
+<section id="graduates">
+  <div class="inner">
+    <div class="stag" data-mn="Манай төгсөгчид" data-en="Our Alumni">Манай төгсөгчид</div>
+    <h2 class="stitle" data-mn="Төгсөгчдийн Wall" data-en="Graduates Wall">Төгсөгчдийн Wall</h2>
+    <div class="grad-layout">
+      <div class="grad-list fade-in" id="grad-grid"></div>
+      <div class="grad-form fade-in">
+        <h3 data-mn="Нэрээ нэмэх" data-en="Add Your Name">Нэрээ нэмэх</h3>
+        <div id="grad-msg" style="display:none;padding:10px;border-radius:8px;margin-bottom:12px;font-size:.88rem"></div>
+        <div class="fg"><label data-mn="Бүтэн нэр *" data-en="Full Name *">Бүтэн нэр *</label><input id="g-name"/></div>
+        <div class="fg mt"><label data-mn="Төгссөн он *" data-en="Year *">Төгссөн он *</label><input id="g-year" type="number" min="2019" max="2099"/></div>
+        <div class="fg mt"><label data-mn="Одоо хаана" data-en="Currently at">Одоо хаана</label><input id="g-place"/></div>
+        <div class="fg mt"><label data-mn="Мэндчилгээ" data-en="Message">Мэндчилгээ</label><textarea id="g-msg" rows="3"></textarea></div>
+        <button class="btn-p full mt" onclick="submitGrad()" data-mn="Илгээх" data-en="Submit">Илгээх</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="bg-alt">
+  <div class="inner">
+    <div class="stag" data-mn="Түгээмэл асуулт" data-en="FAQ">Түгээмэл асуулт</div>
+    <h2 class="stitle" data-mn="Асуулт & Хариулт" data-en="Q & A">Асуулт & Хариулт</h2>
+    <div class="faq-list fade-in" id="faq-list"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="inner">
+    <div class="stag" data-mn="Бидэнтэй холбоо барих" data-en="Get in Touch">Бидэнтэй холбоо барих</div>
+    <h2 class="stitle" data-mn="Холбоо Барих" data-en="Contact">Холбоо Барих</h2>
+    <div class="contact-grid fade-in">
+      <div class="c-items">
+        <div class="ci"><div class="ci-ico">📍</div><div><div class="ci-t" data-mn="Хаяг" data-en="Address">Хаяг</div><div id="ci-addr">—</div></div></div>
+        <div class="ci"><div class="ci-ico">📞</div><div><div class="ci-t" data-mn="Утас" data-en="Phone">Утас</div><div id="ci-phone">—</div></div></div>
+        <div class="ci"><div class="ci-ico">✉️</div><div><div class="ci-t" data-mn="И-мэйл" data-en="Email">И-мэйл</div><div id="ci-email">—</div></div></div>
+        <div class="ci" id="ci-fb" style="display:none"><div class="ci-ico">📘</div><div><div class="ci-t">Facebook</div><a id="ci-fblink" href="#" target="_blank">—</a></div></div>
+      </div>
+      <div class="c-map">🗺️<br/><span data-mn="Газрын зураг" data-en="Map">Газрын зураг</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="ft-inner">
+    <div class="ft-brand" id="ft-brand">Долоодой Сургууль</div>
+    <div class="ft-sub" id="ft-sub">Дорнод аймаг · Хэрлэн сум</div>
+    <nav class="ft-nav">
+      <a href="#about" data-mn="Тухай" data-en="About">Тухай</a>
+      <a href="#teachers" data-mn="Багш нар" data-en="Teachers">Багш нар</a>
+      <a href="#news" data-mn="Мэдээ" data-en="News">Мэдээ</a>
+      <a href="#gallery" data-mn="Галерей" data-en="Gallery">Галерей</a>
+      <a href="#contact" data-mn="Холбоо" data-en="Contact">Холбоо</a>
+    </nav>
+    <div class="ft-copy" id="ft-copy">© 2024 Долоодой Сургууль</div>
+    <a href="/admin" class="ft-admin">⚙</a>
+  </div>
+</footer>
+
+<!-- News Modal -->
+<div class="overlay" id="news-ov" onclick="if(event.target===this)closeOv('news-ov')">
+  <div class="modal">
+    <div class="mh"><h3 id="m-title"></h3><button onclick="closeOv('news-ov')" class="mx">✕</button></div>
+    <div class="mb">
+      <div id="m-date" class="m-date"></div>
+      <img id="m-img" style="display:none" class="m-img" alt=""/>
+      <p id="m-body" style="white-space:pre-wrap;line-height:1.8;color:var(--muted)"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lb" onclick="closeLB()">
+  <button class="lb-x" onclick="closeLB()">✕</button>
+  <img id="lb-img" src="" alt=""/>
+</div>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>
