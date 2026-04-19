@@ -90,11 +90,16 @@ def admin_update_school():
     d         = request.form
     logo_path = save_upload(request.files.get("logo"), "logo")
     row       = SchoolInfo.query.first() or SchoolInfo(id=1)
-    fields    = ["full_name","founded_date","vision","mission","values_text",
-                 "district","street","building","phone","email","facebook_url"]
+    fields = ["full_name","founded_date","vision","mission","values_text",
+              "district","street","building","phone","email","facebook_url"]
     for f in fields:
         if f in d:
-            setattr(row, f, d[f])
+            val = d[f]
+            # Хоосон огноог NULL болгох
+            if f == "founded_date" and val == "":
+                val = None
+            setattr(row, f, val)
+
     if logo_path:
         row.logo_path = logo_path
     db.session.add(row)

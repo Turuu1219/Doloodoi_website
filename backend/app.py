@@ -58,18 +58,20 @@ def create_app() -> Flask:
         },
     })
 
-    @app.get("/")
-    def serve_index():
-        if not os.path.exists(os.path.join(TEMPLATE_DIR, "index.html")):
-            return jsonify({"error": f"index.html not found in {TEMPLATE_DIR}"}), 404
+    # Frontend routes
+    @app.route("/", defaults={"path": ""})
+    @app.route("/<path:path>")
+    def serve(path):
+        # Static files — css, js, uploads
+        if path.startswith("static/"):
+            relative = path[len("static/"):]
+            return send_from_directory(STATIC_DIR, relative)
+        # Admin panel
+        if path == "admin":
+            return send_from_directory(TEMPLATE_DIR, "admin.html")
+        # Default → index
         return send_from_directory(TEMPLATE_DIR, "index.html")
-
-    @app.get("/admin")
-    def serve_admin():
-        return send_from_directory(TEMPLATE_DIR, "admin.html")
-
     logger.info("✅ App ready | debug=%s", Config.DEBUG)
-
     return app
 
     # Blueprints

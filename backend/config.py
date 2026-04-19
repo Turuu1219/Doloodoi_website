@@ -22,12 +22,13 @@ class Config:
 
     # SQLAlchemy
     SQLALCHEMY_DATABASE_URI = (
-        f"mysql+mysqlconnector://{os.getenv('DB_USER','school_user')}"
-        f":{os.getenv('DB_PASSWORD','school_pass')}"
-        f"@{os.getenv('DB_HOST','localhost')}"
-        f":{os.getenv('DB_PORT',3306)}"
-        f"/{os.getenv('DB_NAME','doloodoi_db')}?charset=utf8mb4"
-    )
+    f"mysql+mysqlconnector://{os.getenv('DB_USER','school_user')}"
+    f":{os.getenv('DB_PASSWORD','school_pass')}"
+    f"@{os.getenv('DB_HOST','localhost')}"
+    f":{os.getenv('DB_PORT',3306)}"
+    f"/{os.getenv('DB_NAME','doloodoi_db')}"
+    f"?charset=utf8mb4&collation=utf8mb4_unicode_ci"
+  )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_pre_ping": True,
