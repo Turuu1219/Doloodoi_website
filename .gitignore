@@ -1,7 +1,5 @@
-# Environment
 .env
 
-# Python
 __pycache__/
 *.pyc
 *.pyo
@@ -13,21 +11,16 @@ build/
 .venv/
 venv/
 
-# Uploads (user content — not in git)
 frontend/static/uploads/
 
-# SSL certs
 nginx/ssl/
 
-# DB
 *.db
 *.sqlite3
 
-# OS
 .DS_Store
 Thumbs.db
 
-# Logs
 *.log
 
 # IDE
