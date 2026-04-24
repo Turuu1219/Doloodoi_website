@@ -1,14 +1,9 @@
 'use strict';
-/* ============================================================
-   ДОЛООДОЙ СУРГУУЛЬ — main.js v3.0
-   All frontend logic: data fetching, rendering, dark/lang
-   ============================================================ */
 
 let lang = localStorage.getItem('lang') || 'mn';
 let allClasses = [], allAch = [], achByClass = {}, galleryData = [];
 let newsPage = 1;
 
-/* ── API ────────────────────────────────────────────────────── */
 async function api(url) {
   try {
     const r = await fetch(url, { credentials: 'include' });
@@ -17,7 +12,6 @@ async function api(url) {
   } catch (e) { console.error('API', url, e); return null; }
 }
 
-/* ── Dark mode ──────────────────────────────────────────────── */
 function toggleDark() {
   const html = document.documentElement;
   const dark = html.getAttribute('data-theme') === 'dark';
