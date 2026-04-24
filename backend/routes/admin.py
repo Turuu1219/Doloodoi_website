@@ -30,7 +30,6 @@ def admin_login():
                     max_age=Config.SESSION_HOURS * 3600)
     return resp
 
-
 @admin_bp.post("/logout")
 @admin_required
 def admin_logout():
@@ -39,14 +38,11 @@ def admin_logout():
     resp.delete_cookie("admin_token")
     return resp
 
-
 @admin_bp.get("/me")
 @admin_required
 def admin_me():
     return jsonify({"username": request.admin.username, "role": request.admin.role})
 
-
-# ── Dashboard stats ───────────────────────────────────────────
 @admin_bp.get("/stats")
 @admin_required
 def admin_stats():
@@ -63,14 +59,11 @@ def admin_stats():
         "graduates_approved": Graduate.query.filter_by(is_approved=True).count(),
     })
 
-
-# ── School Info ───────────────────────────────────────────────
 @admin_bp.get("/school")
 @admin_required
 def admin_get_school():
     row = SchoolInfo.query.first()
     return jsonify(row.to_dict() if row else {})
-
 
 @admin_bp.put("/school")
 @admin_required
@@ -83,7 +76,6 @@ def admin_update_school():
     for f in fields:
         if f in d:
             val = d[f]
-            # Хоосон огноог NULL болгох
             if f == "founded_date" and val == "":
                 val = None
             setattr(row, f, val)
@@ -95,14 +87,11 @@ def admin_update_school():
     log_audit(request.admin.id, "school_info", "UPDATE", 1)
     return ok(message="Хадгалагдлаа")
 
-
-# ── School Photos ─────────────────────────────────────────────
 @admin_bp.get("/school-photos")
 @admin_required
 def admin_get_school_photos():
     rows = SchoolPhoto.query.order_by(SchoolPhoto.sort_order).all()
     return jsonify([r.to_dict() for r in rows])
-
 
 @admin_bp.post("/school-photos")
 @admin_required
@@ -119,7 +108,6 @@ def admin_add_school_photo():
     log_audit(request.admin.id, "school_photos", "INSERT", row.id)
     return ok({"id": row.id, "path": path}, status=201)
 
-
 @admin_bp.delete("/school-photos/<int:pid>")
 @admin_required
 def admin_delete_school_photo(pid):
@@ -129,8 +117,6 @@ def admin_delete_school_photo(pid):
     log_audit(request.admin.id, "school_photos", "DELETE", pid)
     return ok(message="Устгагдлаа")
 
-
-# ── Director ──────────────────────────────────────────────────
 @admin_bp.get("/director")
 @admin_required
 def admin_get_director():
@@ -154,8 +140,6 @@ def admin_update_director():
     log_audit(request.admin.id, "director", "UPDATE", 1)
     return ok(message="Хадгалагдлаа")
 
-
-# ── Teachers ──────────────────────────────────────────────────
 @admin_bp.get("/teachers")
 @admin_required
 def admin_get_teachers():
@@ -207,14 +191,11 @@ def admin_delete_teacher(tid):
     log_audit(request.admin.id, "teachers", "DELETE", tid)
     return ok(message="Устгагдлаа")
 
-
-# ── Classes ───────────────────────────────────────────────────
 @admin_bp.get("/classes")
 @admin_required
 def admin_get_classes():
     rows = Class.query.order_by(Class.grade, Class.section).all()
     return jsonify([c.to_dict() for c in rows])
-
 
 @admin_bp.post("/classes")
 @admin_required
@@ -230,7 +211,6 @@ def admin_add_class():
     log_audit(request.admin.id, "classes", "INSERT", row.id)
     return ok({"id": row.id}, status=201)
 
-
 @admin_bp.put("/classes/<int:cid>")
 @admin_required
 def admin_update_class(cid):
@@ -243,7 +223,6 @@ def admin_update_class(cid):
     log_audit(request.admin.id, "classes", "UPDATE", cid)
     return ok(message="Хадгалагдлаа")
 
-
 @admin_bp.delete("/classes/<int:cid>")
 @admin_required
 def admin_delete_class(cid):
@@ -253,15 +232,12 @@ def admin_delete_class(cid):
     log_audit(request.admin.id, "classes", "DELETE", cid)
     return ok(message="Устгагдлаа")
 
-
-# ── News ──────────────────────────────────────────────────────
 @admin_bp.get("/news")
 @admin_required
 def admin_get_news():
     page = request.args.get("page", 1, type=int)
     q    = News.query.order_by(News.news_date.desc())
     return jsonify(paginate(q, page, 20))
-
 
 @admin_bp.post("/news")
 @admin_required
@@ -277,7 +253,6 @@ def admin_add_news():
     db.session.commit()
     log_audit(request.admin.id, "news", "INSERT", row.id)
     return ok({"id": row.id}, status=201)
-
 
 @admin_bp.put("/news/<int:nid>")
 @admin_required
@@ -296,7 +271,6 @@ def admin_update_news(nid):
     log_audit(request.admin.id, "news", "UPDATE", nid)
     return ok(message="Хадгалагдлаа")
 
-
 @admin_bp.delete("/news/<int:nid>")
 @admin_required
 def admin_delete_news(nid):
@@ -306,14 +280,11 @@ def admin_delete_news(nid):
     log_audit(request.admin.id, "news", "DELETE", nid)
     return ok(message="Устгагдлаа")
 
-
-# ── Achievements ──────────────────────────────────────────────
 @admin_bp.get("/achievements")
 @admin_required
 def admin_get_achievements():
     rows = Achievement.query.order_by(Achievement.achieved_year.desc()).all()
     return jsonify([a.to_dict() for a in rows])
-
 
 @admin_bp.post("/achievements")
 @admin_required
@@ -331,7 +302,6 @@ def admin_add_achievement():
     log_audit(request.admin.id, "achievements", "INSERT", row.id)
     return ok({"id": row.id}, status=201)
 
-
 @admin_bp.put("/achievements/<int:aid>")
 @admin_required
 def admin_update_achievement(aid):
@@ -345,7 +315,6 @@ def admin_update_achievement(aid):
     log_audit(request.admin.id, "achievements", "UPDATE", aid)
     return ok(message="Хадгалагдлаа")
 
-
 @admin_bp.delete("/achievements/<int:aid>")
 @admin_required
 def admin_delete_achievement(aid):
@@ -355,14 +324,11 @@ def admin_delete_achievement(aid):
     log_audit(request.admin.id, "achievements", "DELETE", aid)
     return ok(message="Устгагдлаа")
 
-
-# ── Announcements ─────────────────────────────────────────────
 @admin_bp.get("/announcements")
 @admin_required
 def admin_get_announcements():
     rows = Announcement.query.order_by(Announcement.published_date.desc()).all()
     return jsonify([a.to_dict() for a in rows])
-
 
 @admin_bp.post("/announcements")
 @admin_required
@@ -380,7 +346,6 @@ def admin_add_announcement():
     log_audit(request.admin.id, "announcements", "INSERT", row.id)
     return ok({"id": row.id}, status=201)
 
-
 @admin_bp.put("/announcements/<int:aid>")
 @admin_required
 def admin_update_announcement(aid):
@@ -393,7 +358,6 @@ def admin_update_announcement(aid):
     log_audit(request.admin.id, "announcements", "UPDATE", aid)
     return ok(message="Хадгалагдлаа")
 
-
 @admin_bp.delete("/announcements/<int:aid>")
 @admin_required
 def admin_delete_announcement(aid):
@@ -403,14 +367,11 @@ def admin_delete_announcement(aid):
     log_audit(request.admin.id, "announcements", "DELETE", aid)
     return ok(message="Устгагдлаа")
 
-
-# ── Gallery ───────────────────────────────────────────────────
 @admin_bp.get("/gallery/albums")
 @admin_required
 def admin_get_albums():
     rows = GalleryAlbum.query.order_by(GalleryAlbum.event_date.desc()).all()
     return jsonify([a.to_dict() for a in rows])
-
 
 @admin_bp.post("/gallery/albums")
 @admin_required
@@ -424,7 +385,6 @@ def admin_add_album():
     log_audit(request.admin.id, "gallery_albums", "INSERT", row.id)
     return ok({"id": row.id}, status=201)
 
-
 @admin_bp.delete("/gallery/albums/<int:aid>")
 @admin_required
 def admin_delete_album(aid):
@@ -433,7 +393,6 @@ def admin_delete_album(aid):
     db.session.commit()
     log_audit(request.admin.id, "gallery_albums", "DELETE", aid)
     return ok(message="Устгагдлаа")
-
 
 @admin_bp.post("/gallery/photos")
 @admin_required
@@ -450,7 +409,6 @@ def admin_add_gallery_photo():
     log_audit(request.admin.id, "gallery_photos", "INSERT", row.id)
     return ok({"id": row.id, "path": path}, status=201)
 
-
 @admin_bp.delete("/gallery/photos/<int:pid>")
 @admin_required
 def admin_delete_gallery_photo(pid):
@@ -460,14 +418,11 @@ def admin_delete_gallery_photo(pid):
     log_audit(request.admin.id, "gallery_photos", "DELETE", pid)
     return ok(message="Устгагдлаа")
 
-
-# ── FAQ ───────────────────────────────────────────────────────
 @admin_bp.get("/faq")
 @admin_required
 def admin_get_faq():
     rows = FAQ.query.order_by(FAQ.sort_order).all()
     return jsonify([f.to_dict() for f in rows])
-
 
 @admin_bp.post("/faq")
 @admin_required
@@ -481,7 +436,6 @@ def admin_add_faq():
     log_audit(request.admin.id, "faq", "INSERT", row.id)
     return ok({"id": row.id}, status=201)
 
-
 @admin_bp.put("/faq/<int:fid>")
 @admin_required
 def admin_update_faq(fid):
@@ -494,7 +448,6 @@ def admin_update_faq(fid):
     log_audit(request.admin.id, "faq", "UPDATE", fid)
     return ok(message="Хадгалагдлаа")
 
-
 @admin_bp.delete("/faq/<int:fid>")
 @admin_required
 def admin_delete_faq(fid):
@@ -504,14 +457,11 @@ def admin_delete_faq(fid):
     log_audit(request.admin.id, "faq", "DELETE", fid)
     return ok(message="Устгагдлаа")
 
-
-# ── Graduates ─────────────────────────────────────────────────
 @admin_bp.get("/graduates")
 @admin_required
 def admin_get_graduates():
     rows = Graduate.query.order_by(Graduate.submitted_at.desc()).all()
     return jsonify([g.to_dict(admin=True) for g in rows])
-
 
 @admin_bp.post("/graduates/<int:gid>/approve")
 @admin_required
@@ -523,7 +473,6 @@ def admin_approve_graduate(gid):
     log_audit(request.admin.id, "graduates", "UPDATE", gid, "approved")
     return ok(message="Зөвшөөрлөө")
 
-
 @admin_bp.delete("/graduates/<int:gid>")
 @admin_required
 def admin_delete_graduate(gid):
@@ -533,8 +482,6 @@ def admin_delete_graduate(gid):
     log_audit(request.admin.id, "graduates", "DELETE", gid)
     return ok(message="Устгагдлаа")
 
-
-# ── Audit log ─────────────────────────────────────────────────
 @admin_bp.get("/audit-log")
 @superadmin_required
 def admin_get_audit_log():
