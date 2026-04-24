@@ -1,8 +1,3 @@
-"""
-backend/routes/admin.py
-Admin Blueprint — /api/admin/*
-All routes require valid session (admin_required decorator).
-"""
 from datetime import datetime
 from flask import Blueprint, request, jsonify, make_response
 
@@ -18,15 +13,8 @@ from backend.config         import Config
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/api/admin")
 
-
-# ── Auth ──────────────────────────────────────────────────────
 @admin_bp.post("/login")
 def admin_login():
-    """
-    ---
-    summary: Admin login
-    tags: [Admin Auth]
-    """
     d = request.get_json(silent=True) or {}
     missing = require_fields(d, "username", "password")
     if missing:
