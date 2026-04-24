@@ -1,13 +1,7 @@
--- ============================================================
--- ДОЛООДОЙ СУРГУУЛЬ — schema.sql v3.0
--- InnoDB | utf8mb4 | 3NF | Full constraints & indexes
--- ============================================================
-
 CREATE DATABASE IF NOT EXISTS doloodoi_db
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE doloodoi_db;
 
--- 1. SCHOOL_INFO (singleton)
 CREATE TABLE IF NOT EXISTS school_info (
     id            TINYINT UNSIGNED NOT NULL DEFAULT 1,
     full_name     VARCHAR(255)     NOT NULL,
@@ -28,7 +22,6 @@ CREATE TABLE IF NOT EXISTS school_info (
     CONSTRAINT chk_school_id CHECK (id = 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 2. SCHOOL_PHOTOS
 CREATE TABLE IF NOT EXISTS school_photos (
     id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
     photo_path VARCHAR(300)      NOT NULL,
@@ -40,7 +33,6 @@ CREATE TABLE IF NOT EXISTS school_photos (
     INDEX idx_photo_sort (sort_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 3. DIRECTOR (singleton)
 CREATE TABLE IF NOT EXISTS director (
     id            TINYINT UNSIGNED NOT NULL DEFAULT 1,
     full_name     VARCHAR(150)     NOT NULL,
@@ -53,7 +45,6 @@ CREATE TABLE IF NOT EXISTS director (
     CONSTRAINT chk_director_id CHECK (id = 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 4. TEACHERS
 CREATE TABLE IF NOT EXISTS teachers (
     id               INT UNSIGNED  NOT NULL AUTO_INCREMENT,
     full_name        VARCHAR(150)  NOT NULL,
@@ -69,7 +60,6 @@ CREATE TABLE IF NOT EXISTS teachers (
     INDEX idx_teacher_name   (full_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 5. CLASSES (no student_count by design)
 CREATE TABLE IF NOT EXISTS classes (
     id            INT UNSIGNED     NOT NULL AUTO_INCREMENT,
     grade         TINYINT UNSIGNED NOT NULL COMMENT '1-12',
@@ -86,7 +76,6 @@ CREATE TABLE IF NOT EXISTS classes (
     INDEX idx_class_year  (academic_year)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 6. NEWS
 CREATE TABLE IF NOT EXISTS news (
     id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
     title        VARCHAR(255) NOT NULL,
@@ -101,7 +90,6 @@ CREATE TABLE IF NOT EXISTS news (
     INDEX idx_news_published (is_published)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 7. ACHIEVEMENTS
 CREATE TABLE IF NOT EXISTS achievements (
     id            INT UNSIGNED     NOT NULL AUTO_INCREMENT,
     competition   VARCHAR(255)     NOT NULL,
@@ -120,7 +108,6 @@ CREATE TABLE IF NOT EXISTS achievements (
     INDEX idx_ach_student (student_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 8. ANNOUNCEMENTS
 CREATE TABLE IF NOT EXISTS announcements (
     id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
     title          VARCHAR(255) NOT NULL,
@@ -136,7 +123,6 @@ CREATE TABLE IF NOT EXISTS announcements (
     INDEX idx_ann_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 9. GALLERY_ALBUMS
 CREATE TABLE IF NOT EXISTS gallery_albums (
     id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
     name        VARCHAR(150) NOT NULL,
@@ -147,7 +133,6 @@ CREATE TABLE IF NOT EXISTS gallery_albums (
     INDEX idx_album_date (event_date DESC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 10. GALLERY_PHOTOS
 CREATE TABLE IF NOT EXISTS gallery_photos (
     id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
     album_id   INT UNSIGNED      NOT NULL,
@@ -161,7 +146,6 @@ CREATE TABLE IF NOT EXISTS gallery_photos (
     INDEX idx_gallery_sort  (sort_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 11. FAQ
 CREATE TABLE IF NOT EXISTS faq (
     id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
     question    TEXT              NOT NULL,
@@ -177,7 +161,6 @@ CREATE TABLE IF NOT EXISTS faq (
     INDEX idx_faq_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 12. GRADUATES (approval workflow)
 CREATE TABLE IF NOT EXISTS graduates (
     id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
     full_name      VARCHAR(150) NOT NULL,
@@ -192,7 +175,6 @@ CREATE TABLE IF NOT EXISTS graduates (
     INDEX idx_grad_approved (is_approved)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 13. ADMINS
 CREATE TABLE IF NOT EXISTS admins (
     id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
     username      VARCHAR(60)  NOT NULL,
@@ -207,7 +189,6 @@ CREATE TABLE IF NOT EXISTS admins (
     CONSTRAINT uq_admin_email    UNIQUE (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 14. ADMIN_SESSIONS
 CREATE TABLE IF NOT EXISTS admin_sessions (
     id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
     admin_id   INT UNSIGNED NOT NULL,
@@ -222,7 +203,6 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
     INDEX idx_session_expires (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 15. AUDIT_LOG
 CREATE TABLE IF NOT EXISTS audit_log (
     id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     admin_id   INT UNSIGNED,
@@ -237,12 +217,6 @@ CREATE TABLE IF NOT EXISTS audit_log (
     INDEX idx_audit_admin (admin_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ============================================================
--- SEED DATA
--- ============================================================
-
--- Turuu   → password: Misheel
--- Misheel → password: Turuu
 INSERT INTO admins (username, password_hash, email, role, is_active) VALUES
 ('Turuu',
  '$2b$12$icabI94UoGwmNE5Bn6ru4OAPMId1uFNp8XP8azk8qxpqA3z8jJU8i',
