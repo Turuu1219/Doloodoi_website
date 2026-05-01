@@ -1,8 +1,4 @@
-"""
-backend/app.py
-Flask application factory.
-Registers blueprints, extensions, error handlers, Swagger UI.
-"""
+
 import os, logging
 from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
@@ -29,7 +25,6 @@ def create_app() -> Flask:
     app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
     app.config.from_object(Config)
 
-    # 1. Extensions
     db.init_app(app)
     CORS(app, origins=Config.CORS_ORIGINS, supports_credentials=True)
 
@@ -37,17 +32,12 @@ def create_app() -> Flask:
                       default_limits=[Config.RATELIMIT_DEFAULT],
                       storage_uri=Config.RATELIMIT_STORAGE_URL)
 
-    # 2. Blueprints MUST be registered BEFORE limiter.limit
     app.register_blueprint(public_bp)
     app.register_blueprint(admin_bp)
 
-    # 3. Apply limit now that the blueprints are registered
-    # We use app.view_functions because they are now attached to the app
     limiter.limit(Config.RATELIMIT_LOGIN)(app.view_functions["admin.admin_login"])
 
 
-
-    # Swagger UI
     Swagger(app, template={
         "swagger": "2.0",
         "info": {"title": "Долоодой Сургуулийн API", "version": "3.0",
@@ -58,27 +48,24 @@ def create_app() -> Flask:
         },
     })
 
-    # Frontend routes
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")
     def serve(path):
-        # Static files — css, js, uploads
+        
         if path.startswith("static/"):
             relative = path[len("static/"):]
             return send_from_directory(STATIC_DIR, relative)
-        # Admin panel
+        
         if path == "admin":
             return send_from_directory(TEMPLATE_DIR, "admin.html")
-        # Default → index
+        
         return send_from_directory(TEMPLATE_DIR, "index.html")
     logger.info("✅ App ready | debug=%s", Config.DEBUG)
     return app
 
-    # Blueprints
     app.register_blueprint(public_bp)
     app.register_blueprint(admin_bp)
 
-    # Error handlers
     @app.errorhandler(400)
     def bad_request(e):
         return jsonify({"success": False, "error": "Bad request"}), 400
@@ -104,13 +91,11 @@ def create_app() -> Flask:
         logger.error("500: %s", e)
         return jsonify({"success": False, "error": "Серверийн алдаа гарлаа"}), 500
 
-    # Request logging
     @app.before_request
     def log_req():
         from flask import request
         logger.info("→ %s %s | %s", request.method, request.path, request.remote_addr)
 
-    # Frontend routes
     @app.get("/")
     def serve_index():
         return send_from_directory(TEMPLATE_DIR, "index.html")
